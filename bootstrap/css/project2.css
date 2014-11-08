@@ -1,0 +1,15 @@
+/* Echo out a label for the example */
+.bs-example:after {
+  content: attr(p-title);
+  position: relative;
+  top:  15px;
+  left: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #bbb;
+  border-color: #ddd;
+  border-width: 1px;
+  box-shadow: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

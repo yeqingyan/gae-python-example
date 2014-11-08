@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+{% include 'html/_header.html' %}
+<body>
+  <hr>
+  <div class="container-fluid">
+    <table class="table table-bordered table-hover">
+      <tr class="warning"><th colspan="3">Audio</th></tr>
+      <tr class="warning"><th>Filename</th><th>Type</th><th/></tr>
+      {% for item in AudioTable.run() %}
+      <tr class="warning">
+        <td> <a href="/file/{{item.key()}}">{{item.filename}}</a> </td>
+        <td> {{item.content_type}} </td>
+        <td> <button onclick="myFunction('{{item.key()}}')">Delete</button></td>
+      </tr>
+      {% endfor %}
+      <tr class="danger"><th colspan="3">Video</th></tr>
+      <tr class="danger"><th>Filename</th><th>Type</th><th/></tr>
+      {% for item in VideoTable.run() %}
+      <tr class="danger">
+        <td> <a href="/file/{{item.key()}}">{{item.filename}}</a> </td>
+        <td> {{item.content_type}} </td>
+        <td> <button onclick="myFunction('{{item.key()}}')">Delete</button></td>
+      </tr>
+      {% endfor %}
+      <tr class="info"><th colspan="3">Image</th></tr>
+      <tr class="info"><th>Image name</th><th>Type</th><th/></tr>
+      {% for item in ImageTable.run() %}
+      <tr class="info">
+        <td> <a href="/file/{{item.key()}}">{{item.filename}}</a><br><img src="{{ImageAPI.get_serving_url(blob_key=item.key())}}=s250"></img></td>
+        <td> {{item.content_type}} </td>
+        <td> <a class="btn" href="/serve/{{item.key()}}">Modify</a>
+             <button onclick="myFunction('{{item.key()}}')">Delete</button></td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <form role="form" action="{{UploadURL}}" method="POST" enctype="multipart/form-data">
+      <fieldset>      
+        <legend>Choose the file to upload</legend>
+        <div class="form-group">
+          <label for="InputFile">Upload File: </label>
+          <input type="file" id="InputFile" name="file"><br>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <script>
+  function myFunction(itemkey) {
+    var r = confirm("Delete item?");
+    if (r == true) {
+      window.location.replace("/delete?delete_id=".concat(itemkey));
+    } else {
+      return;
+    }
+  }
+  </script>
+  {% include 'html/_footer.html' %}
+</body>
+</html>
+{% endautoescape %}
