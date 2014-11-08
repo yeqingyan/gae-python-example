@@ -10,48 +10,66 @@
     </ul>
   </div>
   <hr>
-  <div class="container-fluid">
-    <div class="container-fluid">
+  <div class="container">
+    <div class="container">
       <div class="row">
-        <div class="col-md-4">
-          <form action="/rotate/{{imageKey}}" method="post">
-            <fieldset>
-              <legend>Rotate:</legend>
-              <p>Input rotate degrees: <input type="number" name="degree">
-                <button type="submit" class="btn btn-default">Rotate</button></p>
-              </fieldset>
-            </form>
-          </div>
-          <div class="col-md-6">
-            <form action="/crop/{{imageKey}}" method="post">
-              <fieldset>      
-                <legend>Crop:</legend>
-                <div id="preview-pane">
-                  <div class="preview-container">
-                    <img src="{{imageURL}}" class="jcrop-preview" alt="Preview"/>
-                  </div>                  
-                </div>
-                <div class="inline-labels">
-                  <label>X1 <input type="text" size="4" id="x1" name="x1" /></label>
-                  <label>Y1 <input type="text" size="4" id="y1" name="y1" /></label>
-                  <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
-                  <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
-                  <label>W <input type="text" size="4" id="w" name="w" /></label>
-                  <label>H <input type="text" size="4" id="h" name="h" /></label>
-                </div>
-                <button type="submit" class="btn btn-default">Crop</button>
-              </fieldset>
-            </form>
-          </div>
 
+        <div class="col-md-6">
         </div>
+
       </div>
     </div>
-    <button type="button" class="btn btn-primary">Width: {{imageWidth}}</button>
-    <button type="button" class="btn btn-primary">Height: {{imageHeight}}</button>
-    <button type="button" class="btn btn-primary">Format: {{imageFormat}}</button>
-    <div>
+  </div>
+  <button type="button" class="btn btn-primary">Width: {{imageWidth}}</button>
+  <button type="button" class="btn btn-primary">Height: {{imageHeight}}</button>
+  <button type="button" class="btn btn-primary">Format: {{imageFormat}}</button>
+  <div class="row">
+    <div class="col-lg-7">
       <img src="{{imageURL}}" id="target"/>
+    </div>
+    <div class="col-lg-5">
+      <div class="row">
+        <form action="/crop/{{imageKey}}" method="post">
+          <div class="col-lg-6">         
+            <fieldset>      
+              <legend>Crop:</legend>
+              <div id="preview-pane">
+                <div class="preview-container">
+                  <img src="{{imageURL}}" class="jcrop-preview" alt="Preview"/>
+                </div>  
+              </div>
+              <button type="submit" class="btn btn-default">Crop</button>
+            </fieldset>
+          </div>
+          <div class="col-lg-6 inline-labels">
+            <label>X1 <input type="text" size="4" id="x1" name="x1" /></label><br>
+            <label>Y1 <input type="text" size="4" id="y1" name="y1" /></label><br>
+            <label>X2 <input type="text" size="4" id="x2" name="x2" /></label><br>
+            <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label><br>
+            <label>W <input type="text" size="4" id="w" name="w" /></label><br>
+            <label>H <input type="text" size="4" id="h" name="h" /></label><br> 
+            <input type="hidden" size="4" id="l" name="l" /><br> 
+            <input type="hidden" size="4" id="t" name="t" /><br> 
+            <input type="hidden" size="4" id="r" name="r" /><br> 
+            <input type="hidden" size="4" id="b" name="b" /><br> 
+          </div>
+        </form>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-lg-6">
+          <div>
+            <form action="/rotate/{{imageKey}}" method="post">
+              <fieldset>
+                <legend>Rotate:</legend>
+                <p>Input rotate degrees: <input type="number" name="degree">
+                  <button type="submit" class="btn btn-default">Rotate</button></p>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script language="Javascript">
     jQuery(function($){
@@ -71,9 +89,11 @@
 
       console.log('init',[xsize,ysize]);
       $('#target').Jcrop({
-      onChange: updatePreview,
-      onSelect: showCoords,
-      aspectRatio: xsize / ysize
+        onChange: updatePreview,
+        onSelect: showCoords,
+        boxWidth: 800, 
+        boxHeight: 600,
+        aspectRatio: xsize / ysize
       },function(){
         // Use the API to get the real image size
         var bounds = this.getBounds();
@@ -106,6 +126,11 @@
         $('#y2').val(c.y2);
         $('#w').val(c.w);
         $('#h').val(c.h);
+        $('#l').val(c.x/boundx);
+        $('#t').val(c.y/boundy);
+        $('#r').val(c.x2/boundx);
+        $('#b').val(c.y2/boundy);
+
       };
 
       function showCoords(c)
@@ -118,8 +143,8 @@
         $('#h').val(c.h);
       };
     });
-  </script>
-  <style type="text/css">
+</script>
+<style type="text/css">
 
 /* Apply these styles only when #preview-pane has
 been placed within the Jcrop widget */
@@ -150,8 +175,8 @@ been placed within the Jcrop widget */
 }
 
 #preview-pane .preview-container {
-  width: 250px;
-  height: 170px;
+  width: 200px;
+  height: 150px;
   overflow: hidden;
 }
 </style>

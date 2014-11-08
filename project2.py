@@ -146,13 +146,13 @@ class ChopHandler(webapp2.RequestHandler):
         image = images.Image(blob_key=resource)
         image.im_feeling_lucky() # do a transform, otherwise GAE complains.
         image.execute_transforms(output_encoding=images.PNG,quality=1)
-        print self.request.get("x1")
-        left = float(self.request.get("x1"))/image.width
-        top = float(self.request.get("y1"))/image.height
-        right = float(self.request.get("x2"))/image.width
-        bottom = float(self.request.get("y2"))/image.height
+        left = float(self.request.get("l"))
+        top = float(self.request.get("t"))
+        right = float(self.request.get("r"))
+        bottom = float(self.request.get("b"))
+        print "Left %f, top %f, right %f, bottom %f" %(left,top,right,bottom)
 
-        image.crop(float(left), float(top), float(right), float(bottom))
+        image.crop(left, top, right, bottom)
         newimage = image.execute_transforms(output_encoding=images.JPEG)
 
         newblobFile = BlobFile(content=newimage)
