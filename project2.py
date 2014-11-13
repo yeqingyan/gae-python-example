@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, 'libs')
 import os
 import urllib
 import time
@@ -14,7 +16,7 @@ import webapp2
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
-    extensions=['jinja2.ext.autoescape'],
+    extensions=['jinja2.ext.autoescape', 'pyjade.ext.jinja.PyJadeExtension'],
     autoescape=True)
 
 class BlobFile(db.Model):
@@ -49,7 +51,7 @@ class MainPage(webapp2.RequestHandler):
             'ImageAPI': images,
         }
 
-        template = JINJA_ENVIRONMENT.get_template('html/index.html')
+        template = JINJA_ENVIRONMENT.get_template('html/index.jade')
         self.response.write(template.render(template_values))
 
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
@@ -93,7 +95,7 @@ class ServeHandler(webapp2.RequestHandler):
             'imageKey': resource,
         }
 
-        template = JINJA_ENVIRONMENT.get_template('html/image.html')
+        template = JINJA_ENVIRONMENT.get_template('html/image.jade')
         self.response.headers.add('Content-Encoding', 'gzip')
         self.response.write(template.render(template_values))
 
@@ -124,7 +126,7 @@ class RotateHandler(webapp2.RequestHandler):
             'SignoutURL': url_link,
             'imageURL': img_url,
         }
-        template = JINJA_ENVIRONMENT.get_template('html/newimage.html')
+        template = JINJA_ENVIRONMENT.get_template('html/newimage.jade')
         self.response.write(template.render(template_values))
         return
 
@@ -164,7 +166,7 @@ class ChopHandler(webapp2.RequestHandler):
             'SignoutURL': url_link,
             'imageURL': img_url,
         }
-        template = JINJA_ENVIRONMENT.get_template('html/newimage.html')
+        template = JINJA_ENVIRONMENT.get_template('html/newimage.jade')
         self.response.write(template.render(template_values))
         return
 
@@ -198,7 +200,6 @@ class ThumbHandler(webapp2.RequestHandler):
     def get(self, resource):
         resource = str(urllib.unquote(resource))
         thumburl = images.get_serving_url(blob_key=resource)
-
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),

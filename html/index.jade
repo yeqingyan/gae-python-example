@@ -1,0 +1,71 @@
+doctype html
+{% autoescape true %}
+html
+  head
+    include ./html/_header.jade
+body
+  hr
+  .container-fluid
+    table(class="table table-bordered table-hover")
+      tr.warning
+        th(colspan="3") Audio
+      tr.warning
+        th Filename 
+        th Type
+        th
+      {% for item in AudioTable.run() %}
+      tr.warning
+        td: a(href="/file/{{item.key()}}")  {{item.filename}}
+        td {{item.content_type}}
+        td: button(onclick="myFunction('{{item.key()}}')")  Delete
+      {% endfor %}
+      tr.danger
+        th(colspan="3") Video
+      tr.danger
+        th Filename
+        th Type
+        th
+      {% for item in VideoTable.run() %}
+      tr.danger
+        td: a(href="/file/{{item.key()}}")  {{item.filename}}
+        td  {{item.content_type}} </td>
+        td: button(onclick="myFunction('{{item.key()}}')")  Delete
+      {% endfor %}
+      tr.info
+        th(colspan="3") Image
+      tr.info
+        th Imagename
+        th Type
+        th
+      {% for item in ImageTable.run() %}
+      tr.info
+        td
+          a(href="/file/{{item.key()}}") {{item.filename}}
+          br
+          img(src="{{ImageAPI.get_serving_url(blob_key=item.key())}}=s250")
+        td {{item.content_type}}
+        td
+          a.btn(href="/serve/{{item.key()}}") Modify
+          button(onclick="myFunction('{{item.key()}}')")  Delete
+      {% endfor %}
+    form(role="form", action="{{UploadURL}}", method="POST", enctype="multipart/form-data")
+      fieldset      
+        legend  Choose the file to upload
+        .form-group
+          label(for="InputFile")Upload File:
+          input(type="file", id="InputFile", name="file")
+          br
+          button(type="submit", class="btn btn-default")  Submit
+        
+  script
+    function myFunction(itemkey) {
+      var r = confirm("Delete item?");
+      if (r == true) {
+        window.location.replace("/delete?delete_id=".concat(itemkey));
+      } else {
+        return;
+      }
+    }
+  footer
+    include ./html/_footer.jade
+{% endautoescape %}

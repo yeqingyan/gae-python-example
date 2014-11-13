@@ -1,0 +1,13 @@
+doctype html
+{% autoescape true %}
+html
+  head
+    include ./html/_header.jade
+  body
+  hr
+  br
+  .container-fluid
+    a(href="{{imageURL}}") download
+    br
+    img(src="{{imageURL}}")
+{% endautoescape %}

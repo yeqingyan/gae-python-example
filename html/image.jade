@@ -1,0 +1,162 @@
+doctype html
+{% autoescape true %}
+html
+  head
+    include ./html/_header.jade
+  script(language="Javascript")
+    jQuery(function($){
+
+      // Create variables (in this scope) to hold the API and image size
+      var jcrop_api,
+      boundx,
+      boundy,
+
+      // Grab some information about the preview pane
+      $preview = $('#preview-pane'),
+      $pcnt = $('#preview-pane .preview-container'),
+      $pimg = $('#preview-pane .preview-container img'),
+
+      xsize = $pcnt.width(),
+      ysize = $pcnt.height();
+
+      console.log('init',[xsize,ysize]);
+      $('#target').Jcrop({
+        onChange: updatePreview,
+        onSelect: showCoords,
+        boxWidth: 800, 
+        boxHeight: 600,
+        aspectRatio: xsize / ysize
+      },function(){
+        // Use the API to get the real image size
+        var bounds = this.getBounds();
+        boundx = bounds[0];
+        boundy = bounds[1];
+        // Store the API in the jcrop_api variable
+        jcrop_api = this;
+
+        // Move the preview into the jcrop container for css positioning
+        $preview.appendTo("preview-pane");
+      });
+
+      function updatePreview(c)
+      {
+        if (parseInt(c.w) > 0)
+        {
+          var rx = xsize / c.w;
+          var ry = ysize / c.h;
+
+          $pimg.css({
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+            marginTop: '-' + Math.round(ry * c.y) + 'px'
+          });
+        }
+        $('#x1').val(c.x);
+        $('#y1').val(c.y);
+        $('#x2').val(c.x2);
+        $('#y2').val(c.y2);
+        $('#w').val(c.w);
+        $('#h').val(c.h);
+        $('#l').val(c.x/boundx);
+        $('#t').val(c.y/boundy);
+        $('#r').val(c.x2/boundx);
+        $('#b').val(c.y2/boundy);
+
+      };
+
+      function showCoords(c)
+      {
+        $('#x1').val(c.x);
+        $('#y1').val(c.y);
+        $('#x2').val(c.x2);
+        $('#y2').val(c.y2);
+        $('#w').val(c.w);
+        $('#h').val(c.h);
+      };
+    });
+
+  style
+    .jcrop-holder #preview-pane {
+      display: block;
+      position: absolute;
+      z-index: 2000;
+
+      top: 10px;
+      right: -280px;
+
+      display: block;
+      position: absolute;
+      z-index: 2000;
+      top: 1px;
+      right: 1px;
+      padding: 6px;
+      border: 1px rgba(0,0,0,.4) solid;
+      background-color: white;
+
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      border-radius: 6px;
+
+      -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+      -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    #preview-pane .preview-container {
+      width: 200px;
+      height: 150px;
+      overflow: hidden;
+    }
+  body
+  .container-fluid
+    ul(class="nav nav-pills", role="tablist")
+      li(role="presentation", class="active") a(href="/") Home
+      li(role="presentation", class="navbar-right") a(href="{{SignoutURL}}") Sign out
+  hr
+
+  button(type="button", class="btn btn-primary") Width: {{imageWidth}}
+  button(type="button", class="btn btn-primary") Height: {{imageHeight}}
+  button(type="button" class="btn btn-primary") Format: {{imageFormat}}
+  .row
+    .col-lg-7
+      img(src="{{imageURL}}", id="target")
+    .col-lg-5
+      .row
+        .col-lg-12
+          form(action="/crop/{{imageKey}}", method="post")         
+            fieldset      
+              legend Crop:
+              .col-lg-6
+                div#preview-pane
+                  .preview-container
+                    img(src="{{imageURL}}", class="jcrop-preview", alt="Preview")
+              div(class="col-lg-6 inline-labels")
+                label X1
+                  input#x1(type="text", size="4", name="x1")
+                label Y1 
+                  input#y1(type="text", size="4", name="y1")
+                label X2
+                  input#x2(type="text", size="4", name="x2") 
+                label Y2 
+                  input#y2(type="text", size="4", name="y2")
+                label W
+                  input#w(type="text", size="4", name="w")
+                label H
+                  input#h(type="text", size="4", name="h")
+                input#l(type="hidden", size="4", name="l")
+                input#t(type="hidden", size="4", name="t")
+                input#r(type="hidden", size="4", name="r")
+                input#b(type="hidden", size="4", name="b") 
+                button(type="submit", class="btn btn-default") Crop
+      br
+      .row
+        .col-lg-6
+          form(action="/rotate/{{imageKey}}", method="post")
+            fieldset
+              legend Rotate:
+                .col-lg-12
+                  p Input rotate degrees: 
+                    input(type="number",name="degree")
+                    button(type="submit", class="btn btn-default") Rotate
+{% endautoescape %}
